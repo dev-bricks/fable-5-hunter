@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/logo.jpg" alt="fable-5-hunter logo" width="250">
+</p>
+
 # fable-5-hunter
 
 > *"Hunting Fable 5, so you don't have to."*
