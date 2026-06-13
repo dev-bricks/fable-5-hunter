@@ -1,0 +1,8 @@
+{
+  "available": "¡HURRA, ESTÁ DE VUELTA! Claude Fable 5 está al alcance otra vez, aprovéchalo mientras dure.",
+  "alive": "Aún no se ha avistado Fable 5, pero la caza continúa.",
+  "gone_again": "Fable 5 ha vuelto a desaparecer, se reanuda la caza.",
+  "cannot_check": "El cazador no puede verificar la disponibilidad: {detail}",
+  "test_notify": "Prueba: Fable 5 Hunter puede comunicarse contigo. Las notificaciones están funcionando.",
+  "started": "Fable 5 Hunter iniciado. Comprobando cada {interval} minutos."
+}

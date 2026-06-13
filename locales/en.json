@@ -1,0 +1,8 @@
+{
+  "available": "HOORAY, IT'S BACK! Claude Fable 5 is reachable again — grab it while it lasts.",
+  "alive": "No Fable 5 sighted yet, but the hunt goes on.",
+  "gone_again": "Fable 5 has disappeared again — resuming the hunt.",
+  "cannot_check": "Hunter cannot check availability: {detail}",
+  "test_notify": "Test: Fable 5 Hunter can reach you. Notifications are working.",
+  "started": "Fable 5 Hunter started. Checking every {interval} minutes."
+}

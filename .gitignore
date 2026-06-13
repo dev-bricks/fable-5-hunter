@@ -1,0 +1,63 @@
+# User-specific runtime files (contain secrets or local state)
+config.json
+state.json
+*.log
+FABLE5_IS_BACK.txt
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+MANIFEST
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Testing
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+
+# Type checkers / linters
+.mypy_cache/
+.ruff_cache/
+.dmypy.json
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*~
+
+# OS
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# OneDrive temp files
+~$*
+
+# Internal / not for public repo
+Plan.txt
+_archive/
+_private/
+*BRIEFING*
+*.credentials
+.env
+.env.local
+TODO.md
+DONE.md

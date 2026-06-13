@@ -1,0 +1,39 @@
+{
+  "_comment": "Copy this file to config.json and fill in your settings.",
+
+  "model_id": "claude-fable-5",
+  "check_interval_minutes": 30,
+  "post_found_interval_minutes": 360,
+  "claude_timeout_seconds": 120,
+
+  "_comment_lang": "Language for built-in messages. Options: 'en', 'de', 'auto' (detect from OS). Default: 'en'.",
+  "lang": "en",
+
+  "_comment_notifiers": "Active notification channels. All listed channels fire; the HOORAY alert is only considered delivered when at least one returns success. Default (desktop + file) works without any setup.",
+  "notifiers": ["desktop", "file"],
+  "alert_retry_seconds": 60,
+
+  "_comment_telegram": "Telegram Bot API — reaches your phone. Create a bot via @BotFather, get your chat ID via https://api.telegram.org/bot<TOKEN>/getUpdates. Alternatively set ENV TELEGRAM_BOT_TOKEN / TELEGRAM_OWNER_ID.",
+  "telegram": {
+    "bot_token": "",
+    "owner_id": ""
+  },
+
+  "_comment_discord": "Discord webhook — paste the webhook URL from Server Settings → Integrations → Webhooks.",
+  "discord": {
+    "webhook_url": ""
+  },
+
+  "_comment_ntfy": "ntfy push notifications — lowest barrier, no account needed. Pick any unique topic name; subscribe at https://ntfy.sh/<topic> or via the ntfy app.",
+  "ntfy": {
+    "topic": "",
+    "server": "https://ntfy.sh"
+  },
+
+  "_comment_messages": "Optional: override individual notification texts. Omit any key to use the built-in locale string (see locales/en.json). Supported keys: available, alive, gone_again.",
+  "messages": {
+    "available": "",
+    "alive": "",
+    "gone_again": ""
+  }
+}

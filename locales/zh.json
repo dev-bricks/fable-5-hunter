@@ -1,0 +1,8 @@
+{
+  "available": "万岁，它回来了！Claude Fable 5 再次可以访问，趁现在赶紧抓住机会吧。",
+  "alive": "尚未发现 Fable 5，但猎捕仍在继续。",
+  "gone_again": "Fable 5 再次消失，继续猎捕。",
+  "cannot_check": "猎人无法检查可用性：{detail}",
+  "test_notify": "测试：Fable 5 Hunter 可以联系到您。通知功能正常工作。",
+  "started": "Fable 5 Hunter 已启动。每 {interval} 分钟检查一次。"
+}

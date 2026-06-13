@@ -1,0 +1,8 @@
+{
+  "available": "やった、戻ってきた！Claude Fable 5 に再びアクセスできます。今のうちに手に入れましょう。",
+  "alive": "Fable 5 はまだ目撃されていませんが、ハントは続きます。",
+  "gone_again": "Fable 5 が再び姿を消しました。ハントを再開します。",
+  "cannot_check": "ハンターは可用性を確認できません: {detail}",
+  "test_notify": "テスト: Fable 5 Hunter はあなたに連絡できます。通知は機能しています。",
+  "started": "Fable 5 Hunter が起動しました。{interval} 分ごとにチェックしています。"
+}
