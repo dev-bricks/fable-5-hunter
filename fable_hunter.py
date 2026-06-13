@@ -63,6 +63,16 @@ HERE = Path(__file__).resolve().parent
 ECHO_TOKEN = "FABLE5_HUNTER_OK_9b2f"
 DETECT_PROMPT = f"Reply with only this exact token and nothing else: {ECHO_TOKEN}"
 
+# Auth/login errors: claude cannot check at all → ERROR (no false alarm, and no
+# misleading "Fable 5 not available" message).
+AUTH_ERROR_MARKERS = (
+    "not logged in",
+    "please run /login",
+    "invalid x-api-key",
+    "authentication_error",
+    "could not resolve account",
+)
+
 # Text fragments that unambiguously signal "not available" (empirically verified).
 UNAVAILABLE_MARKERS = (
     "currently unavailable",
@@ -337,6 +347,12 @@ def check_fable5(cfg: dict) -> tuple[str, str]:
     stdout = proc.stdout or ""
     combined = stdout + "\n" + (proc.stderr or "")
     low = combined.lower()
+
+    # Auth/login errors first: claude cannot check → ERROR instead of a wrong
+    # "Fable 5 not available".
+    for marker in AUTH_ERROR_MARKERS:
+        if marker in low:
+            return ERROR, "claude not logged in / auth error: " + combined.strip()[:200]
 
     # Unambiguously available: the model echoed our unique token on stdout.
     # (stdout only — an echo on stderr must not cause a false-positive.)

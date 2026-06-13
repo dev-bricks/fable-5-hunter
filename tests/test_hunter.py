@@ -157,6 +157,14 @@ class CheckFable5Tests(unittest.TestCase):
         self.assertEqual(status, fh.ERROR)
         self.assertIn("claude", detail.lower())
 
+    def test_not_logged_in_is_error_not_unavailable(self):
+        proc = FakeProc(stdout="Not logged in · Please run /login", returncode=1)
+        with mock.patch.object(fh, "find_claude", return_value="/usr/bin/claude"), \
+             mock.patch.object(fh.subprocess, "run", return_value=proc):
+            status, detail = fh.check_fable5(self.cfg)
+        self.assertEqual(status, fh.ERROR)
+        self.assertIn("auth", detail.lower())
+
     def test_timeout_is_unavailable(self):
         with mock.patch.object(fh, "find_claude", return_value="/usr/bin/claude"), \
              mock.patch.object(
