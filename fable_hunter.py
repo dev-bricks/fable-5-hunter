@@ -39,6 +39,7 @@ import logging
 import os
 import platform
 import shutil
+import signal
 import subprocess
 import sys
 import time
@@ -703,6 +704,18 @@ def hunt(cfg: dict) -> int:
     stale_after = max(interval, post_found) * 2 + 60
     if not acquire_lock(stale_after):
         return 1
+
+    # Release the lock on SIGTERM/SIGINT (launchd/systemd send SIGTERM on stop and
+    # on KeepAlive restart). Without this, a killed instance leaves a fresh lock
+    # that blocks every restart until stale_after — the daemon could never come back.
+    def _release_and_exit(signum, frame):
+        release_lock()
+        sys.exit(0)
+    for _sig in (signal.SIGTERM, signal.SIGINT):
+        try:
+            signal.signal(_sig, _release_and_exit)
+        except (ValueError, OSError):
+            pass  # e.g. not in main thread / unsupported on platform
 
     log.info(_msg(cfg, "started", interval=interval // 60))
     try:

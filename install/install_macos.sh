@@ -16,6 +16,11 @@ SCRIPT="$SCRIPT_DIR/fable_hunter.py"
 PLIST="$HOME/Library/LaunchAgents/$LABEL.plist"
 PYTHON="$(command -v python3 || true)"
 LOG_DIR="$HOME/Library/Logs/fable5hunter"
+# launchd starts with a minimal PATH that usually lacks Homebrew (/opt/homebrew/bin),
+# so `claude` would not be found. Prepend the common tool dirs explicitly (a
+# non-interactive login shell may not load Homebrew), then append the login PATH.
+PYDIR="$(dirname "$PYTHON")"
+USERPATH="/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:$PYDIR:$HOME/.local/bin:$(bash -lc 'printf %s "$PATH"' 2>/dev/null):/usr/bin:/bin:/usr/sbin:/sbin"
 
 if [[ "${1:-}" == "--uninstall" ]]; then
     # bootout is the modern API (macOS Ventura+); fall back to unload for older systems
@@ -51,6 +56,7 @@ cat > "$PLIST" <<PLISTEOF
     <key>EnvironmentVariables</key>
     <dict>
         <key>PYTHONIOENCODING</key><string>utf-8</string>
+        <key>PATH</key><string>$USERPATH</string>
     </dict>
     <key>StandardOutPath</key><string>$LOG_DIR/hunter.log</string>
     <key>StandardErrorPath</key><string>$LOG_DIR/hunter.err.log</string>
@@ -65,12 +71,14 @@ echo "Plist  : $PLIST"
 # Unload any existing instance first (ignore errors if not loaded)
 launchctl bootout "gui/$(id -u)/$LABEL" 2>/dev/null || true
 
-# bootstrap starts the agent immediately via RunAtLoad — no extra kickstart needed.
-# 'launchctl load' is deprecated since Ventura and is NOT used as fallback here.
+# 'launchctl load' is deprecated since Ventura, so we use bootstrap.
 if ! launchctl bootstrap "gui/$(id -u)" "$PLIST"; then
     echo "ERROR: launchctl bootstrap failed. Check the plist: $PLIST" >&2
     exit 1
 fi
+# bootstrap does not reliably trigger RunAtLoad immediately, so kickstart it.
+# (without -k: starts only if not already running, no double start)
+launchctl kickstart "gui/$(id -u)/$LABEL" 2>/dev/null || true
 
 echo "LaunchAgent installed and started."
 echo "Logs : $LOG_DIR/hunter.log"
