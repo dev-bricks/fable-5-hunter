@@ -1,6 +1,4 @@
-<p align="center">
-  <img src="assets/logo.jpg" alt="fable-5-hunter logo" width="500">
-</p>
+![fable-5-hunter logo](assets/logo.jpg)
 
 # fable-5-hunter
 
