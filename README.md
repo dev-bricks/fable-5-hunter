@@ -63,13 +63,6 @@ python fable_hunter.py run
 **Zero dependencies** — Python standard library only (Python >= 3.9).
 No `pip install`, no virtual environment needed.
 
-Or install as a console script via pip:
-
-```bash
-pip install fable-5-hunter
-fable5-hunter run
-```
-
 ---
 
 ## Test mode
@@ -78,7 +71,7 @@ Before relying on the hunter, run the **self-test** to confirm that both the
 detection trigger *and* every configured delivery channel work:
 
 ```bash
-fable5-hunter --test       # or: fable5-hunter test
+python fable_hunter.py --test    # or: python fable_hunter.py test
 ```
 
 This does two things:
