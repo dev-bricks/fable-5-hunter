@@ -1,4 +1,4 @@
-![fable-5-hunter logo](assets/logo.jpg)
+<img src="assets/banner_v2.svg" width="100%" alt="fable-5-hunter — Hunting Fable 5, so you don't have to">
 
 # fable-5-hunter
 

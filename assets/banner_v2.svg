@@ -1,0 +1,379 @@
+<svg viewBox="0 0 1200 340" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#140D24" />
+      <stop offset="35%" stop-color="#2C1A38" />
+      <stop offset="65%" stop-color="#722D4B" />
+      <stop offset="85%" stop-color="#B24643" />
+      <stop offset="100%" stop-color="#DF7247" />
+    </linearGradient>
+    
+    <radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFDD80" stop-opacity="1" />
+      <stop offset="30%" stop-color="#FF8A47" stop-opacity="0.6" />
+      <stop offset="70%" stop-color="#722D4B" stop-opacity="0.15" />
+      <stop offset="100%" stop-color="#140D24" stop-opacity="0" />
+    </radialGradient>
+
+    <linearGradient id="hillGrad1" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#22142B" />
+      <stop offset="100%" stop-color="#110A16" />
+    </linearGradient>
+
+    <linearGradient id="hillGrad2" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1D0E22" />
+      <stop offset="100%" stop-color="#0A050D" />
+    </linearGradient>
+
+    <linearGradient id="groundGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1A0D07" />
+      <stop offset="100%" stop-color="#050201" />
+    </linearGradient>
+
+    <!-- Glowing Filters -->
+    <filter id="redGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+
+    <filter id="glassShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#000000" flood-opacity="0.5" />
+    </filter>
+
+    <!-- Reusable Reed Shape -->
+    <g id="reed">
+      <path d="M 0 0 C 4 -25 10 -50 4 -75 C 3 -77 1 -77 0 -75 C -3 -50 0 -25 0 0 Z" fill="#1A0D07" />
+      <path d="M 2 -40 C 10 -48 18 -46 22 -52 C 12 -42 6 -36 2 -40 Z" fill="#1A0D07" />
+      <path d="M 1 -22 C -6 -30 -14 -34 -20 -32 C -11 -30 -4 -24 1 -22 Z" fill="#1A0D07" />
+    </g>
+
+    <!-- Reusable Cartoon Chicken (Moorhuhn) -->
+    <g id="chicken">
+      <!-- Legs and feet (drawn in back) -->
+      <!-- Left leg -->
+      <path d="M -15 15 C -18 25 -14 28 -14 31" fill="none" stroke="#FF7A00" stroke-width="3.5" stroke-linecap="round" />
+      <!-- Left foot toes -->
+      <path d="M -14 31 L -19 35" stroke="#FF7A00" stroke-width="3" stroke-linecap="round" />
+      <path d="M -14 31 L -14 37" stroke="#FF7A00" stroke-width="3" stroke-linecap="round" />
+      <path d="M -14 31 L -9 35" stroke="#FF7A00" stroke-width="3" stroke-linecap="round" />
+
+      <!-- Right leg -->
+      <path d="M -5 17 C -7 27 -2 30 -2 33" fill="none" stroke="#FF7A00" stroke-width="3.5" stroke-linecap="round" />
+      <!-- Right foot toes -->
+      <path d="M -2 33 L -7 37" stroke="#FF7A00" stroke-width="3" stroke-linecap="round" />
+      <path d="M -2 33 L -2 39" stroke="#FF7A00" stroke-width="3" stroke-linecap="round" />
+      <path d="M -2 33 L 3 37" stroke="#FF7A00" stroke-width="3" stroke-linecap="round" />
+
+      <!-- Tail feathers -->
+      <path d="M -28 5 C -42 5 -42 -8 -28 -6 Z" fill="#5D4037" />
+      <path d="M -30 0 C -45 -10 -35 -22 -26 -13 Z" fill="#4E342E" />
+      <path d="M -26 -7 C -36 -19 -28 -28 -20 -18 Z" fill="#5D4037" />
+
+      <!-- Back Wing -->
+      <path d="M -15 -8 C -22 -22 -14 -28 -8 -14 Z" fill="#4E342E" opacity="0.8" />
+
+      <!-- Main Body -->
+      <ellipse cx="-6" cy="4" rx="28" ry="20" fill="#8D6E63" />
+      <!-- Lighter belly -->
+      <ellipse cx="2" cy="7" rx="16" ry="12" fill="#D7CCC8" />
+
+      <!-- Neck connection -->
+      <path d="M -8 -13 Q 12 -16 16 -6 Q 12 10 -6 5 Z" fill="#8D6E63" />
+
+      <!-- Head -->
+      <circle cx="16" cy="-12" r="13" fill="#8D6E63" />
+
+      <!-- Red Comb (Hahnenkamm) -->
+      <path d="M 6 -22 C 4 -28 10 -30 11 -23 C 12 -30 18 -28 17 -21 C 18 -28 24 -25 21 -18 Z" fill="#D32F2F" />
+
+      <!-- Red Wattle -->
+      <path d="M 20 -2 C 22 3 18 6 16 3 Z" fill="#D32F2F" />
+
+      <!-- Beak (open) -->
+      <!-- Upper beak -->
+      <path d="M 26 -10 Q 35 -12 33 -5 L 24 -7 Z" fill="#FFB300" stroke="#FF6F00" stroke-width="0.8" />
+      <!-- Lower beak -->
+      <path d="M 24 -7 L 31 -5 Q 29 1 22 -3 Z" fill="#FFB300" stroke="#FF6F00" stroke-width="0.8" />
+
+      <!-- Eyes (Googly) -->
+      <!-- Left Eye -->
+      <ellipse cx="14" cy="-14" rx="6.5" ry="7.5" fill="white" stroke="#3E2723" stroke-width="1.2" />
+      <!-- Right Eye -->
+      <ellipse cx="22" cy="-12" rx="6" ry="7" fill="white" stroke="#3E2723" stroke-width="1.2" />
+
+      <!-- Pupils (Crazy-eyed, crossed) -->
+      <!-- Left pupil -->
+      <circle cx="15.5" cy="-14" r="2.2" fill="black" />
+      <!-- Right pupil -->
+      <circle cx="20.5" cy="-12" r="2.0" fill="black" />
+      <!-- White reflection dots -->
+      <circle cx="14.8" cy="-15" r="0.7" fill="white" />
+      <circle cx="19.8" cy="-13" r="0.7" fill="white" />
+
+      <!-- Front Wing (flapping up) -->
+      <path d="M -8 -5 C -15 -25 -2 -30 3 -10 Z" fill="#5D4037" />
+    </g>
+
+    <!-- Crosshair / Reticle -->
+    <g id="crosshair">
+      <!-- Outer thick ring -->
+      <circle cx="0" cy="0" r="75" stroke="#FF3B30" stroke-width="3" fill="none" opacity="0.9" filter="url(#redGlow)" />
+      <!-- Inner thin ring -->
+      <circle cx="0" cy="0" r="22" stroke="#FF3B30" stroke-width="1" fill="none" opacity="0.8" />
+      <!-- Center dot -->
+      <circle cx="0" cy="0" r="3" fill="#FF3B30" filter="url(#redGlow)" />
+      
+      <!-- Reticle lines with central gap -->
+      <line x1="0" y1="-75" x2="0" y2="-22" stroke="#FF3B30" stroke-width="1.5" opacity="0.9" />
+      <line x1="0" y1="22" x2="0" y2="75" stroke="#FF3B30" stroke-width="1.5" opacity="0.9" />
+      <line x1="-75" y1="0" x2="-22" y2="0" stroke="#FF3B30" stroke-width="1.5" opacity="0.9" />
+      <line x1="22" y1="0" x2="75" y2="0" stroke="#FF3B30" stroke-width="1.5" opacity="0.9" />
+
+      <!-- Ticks along lines -->
+      <line x1="-4" y1="-50" x2="4" y2="-50" stroke="#FF3B30" stroke-width="1" opacity="0.8" />
+      <line x1="-4" y1="-36" x2="4" y2="-36" stroke="#FF3B30" stroke-width="1" opacity="0.8" />
+      <line x1="-4" y1="50" x2="4" y2="50" stroke="#FF3B30" stroke-width="1" opacity="0.8" />
+      <line x1="-4" y1="36" x2="4" y2="36" stroke="#FF3B30" stroke-width="1" opacity="0.8" />
+      
+      <line x1="-50" y1="-4" x2="-50" y2="4" stroke="#FF3B30" stroke-width="1" opacity="0.8" />
+      <line x1="-36" y1="-4" x2="-36" y2="4" stroke="#FF3B30" stroke-width="1" opacity="0.8" />
+      <line x1="50" y1="-4" x2="50" y2="4" stroke="#FF3B30" stroke-width="1" opacity="0.8" />
+      <line x1="36" y1="-4" x2="36" y2="4" stroke="#FF3B30" stroke-width="1" opacity="0.8" />
+
+      <!-- Telemetry/Scale indicators -->
+      <path d="M 60 -60 L 70 -60 L 70 -50" fill="none" stroke="#FF3B30" stroke-width="1" opacity="0.7" />
+      <text x="50" y="-66" fill="#FF3B30" font-family="'Courier New', monospace" font-size="9" font-weight="bold" opacity="0.8" letter-spacing="0.5">ZOOM 4.0X</text>
+      
+      <path d="M -60 -60 L -70 -60 L -70 -50" fill="none" stroke="#FF3B30" stroke-width="1" opacity="0.7" />
+      <text x="-90" y="-66" fill="#FF3B30" font-family="'Courier New', monospace" font-size="9" font-weight="bold" opacity="0.8" letter-spacing="0.5">SYS:LKD</text>
+    </g>
+  </defs>
+
+  <!-- CSS Styles and Animations -->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@800;900&amp;family=Inter:wght@400;600;700&amp;display=swap');
+    
+    .wordmark {
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+    }
+    
+    .tagline {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+    }
+
+    .badge-text {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+    }
+
+    /* Animations */
+    @keyframes pulse {
+      0% { opacity: 0.3; }
+      50% { opacity: 1; }
+      100% { opacity: 0.3; }
+    }
+    
+    @keyframes bob-slow {
+      0% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-7px) rotate(1deg); }
+      100% { transform: translateY(0px) rotate(0deg); }
+    }
+    
+    @keyframes bob-medium {
+      0% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-10px) rotate(-2deg); }
+      100% { transform: translateY(0px) rotate(0deg); }
+    }
+
+    @keyframes bob-fast {
+      0% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-12px) rotate(3deg); }
+      100% { transform: translateY(0px) rotate(0deg); }
+    }
+
+    @keyframes scope-track {
+      0% { transform: translate(0px, 0px); }
+      25% { transform: translate(8px, -5px); }
+      50% { transform: translate(-4px, 8px); }
+      75% { transform: translate(-8px, -4px); }
+      100% { transform: translate(0px, 0px); }
+    }
+
+    @keyframes peek-reeds {
+      0% { transform: translateY(0px) rotate(0deg); }
+      35% { transform: translateY(0px) rotate(0deg); }
+      40% { transform: translateY(-22px) rotate(8deg); }
+      60% { transform: translateY(-22px) rotate(8deg); }
+      65% { transform: translateY(0px) rotate(0deg); }
+      100% { transform: translateY(0px) rotate(0deg); }
+    }
+
+    .pulse-dot {
+      animation: pulse 1.8s infinite ease-in-out;
+    }
+
+    .anim-bob-slow {
+      animation: bob-slow 4s infinite ease-in-out;
+    }
+
+    .anim-bob-medium {
+      animation: bob-medium 3.2s infinite ease-in-out;
+    }
+
+    .anim-bob-fast {
+      animation: bob-fast 2.5s infinite ease-in-out;
+    }
+
+    .anim-scope-track {
+      animation: scope-track 7s infinite ease-in-out;
+    }
+
+    .anim-peek {
+      animation: peek-reeds 6s infinite ease-in-out;
+    }
+  </style>
+
+  <!-- 1. Background (fills the canvas, ensures readability on dark/light GitHub pages) -->
+  <rect width="1200" height="340" fill="url(#skyGrad)" />
+  
+  <!-- Warm Sunset Glow -->
+  <circle cx="820" cy="240" r="240" fill="url(#sunGlow)" />
+
+  <!-- 2. Distant Hills (Mid-ground) -->
+  <!-- Back hills -->
+  <path d="M -50 340 L -50 250 C 120 200 280 240 450 205 C 620 170 780 220 950 190 C 1080 165 1200 200 1250 175 L 1250 340 Z" fill="url(#hillGrad1)" opacity="0.65" />
+  
+  <!-- Mid hills -->
+  <path d="M -50 340 L -50 280 C 150 230 320 270 500 230 C 680 190 850 250 1020 210 C 1140 180 1200 215 1250 195 L 1250 340 Z" fill="url(#hillGrad2)" opacity="0.8" />
+
+  <!-- Reflections/Glow on Bog Pools -->
+  <ellipse cx="690" cy="305" rx="90" ry="7" fill="#FFB242" opacity="0.3" filter="url(#redGlow)" />
+  <ellipse cx="940" cy="295" rx="60" ry="5" fill="#FFB242" opacity="0.2" filter="url(#redGlow)" />
+
+  <!-- Foreground Bog Floor -->
+  <path d="M -50 340 L -50 295 Q 180 275 400 288 T 800 282 T 1150 270 T 1250 295 L 1250 340 Z" fill="url(#groundGrad)" />
+
+  <!-- 3. Reeds and Grass Silhouettes (along the bottom, outside the safe zone boundary but frame the landscape) -->
+  <use href="#reed" x="610" y="300" transform="scale(1.1) rotate(-8)" />
+  <use href="#reed" x="635" y="295" transform="scale(0.85) rotate(4)" />
+  <use href="#reed" x="660" y="305" transform="scale(1.05) rotate(-2)" />
+  <use href="#reed" x="780" y="295" transform="scale(0.9) rotate(8)" />
+  <use href="#reed" x="805" y="290" transform="scale(1.2) rotate(-5)" />
+  <use href="#reed" x="910" y="295" transform="scale(0.95) rotate(-10)" />
+  <use href="#reed" x="935" y="290" transform="scale(1.1) rotate(6)" />
+  <use href="#reed" x="970" y="285" transform="scale(0.8) rotate(-4)" />
+  <use href="#reed" x="1005" y="290" transform="scale(1.2) rotate(-3)" />
+  <use href="#reed" x="1035" y="285" transform="scale(0.9) rotate(12)" />
+  <use href="#reed" x="1070" y="280" transform="scale(1.15) rotate(-6)" />
+  <use href="#reed" x="1110" y="295" transform="scale(1.25) rotate(5)" />
+
+  <!-- 4. Key Foreground Elements (Strictly within Safe Zone: x:80..1120, y:60..300) -->
+
+  <!-- Distant Flying Chicken (Left) -->
+  <!-- Placed at x=640, y=105, scale=0.38, flying left (flipped via scale -0.38) -->
+  <g transform="translate(640, 105) scale(-0.38, 0.38)">
+    <g class="anim-bob-medium">
+      <use href="#chicken" />
+    </g>
+  </g>
+
+  <!-- Distant Flying Chicken (Right) -->
+  <!-- Placed at x=1030, y=95, scale=0.48, flying right -->
+  <g transform="translate(1030, 95) scale(0.48)">
+    <g class="anim-bob-fast">
+      <use href="#chicken" />
+    </g>
+  </g>
+
+  <!-- Peeking Chicken in Reeds (Far Right Bottom) -->
+  <!-- Placed at x=1075, y=275, scale=0.52. Animates peeking out from behind reeds. -->
+  <g transform="translate(1075, 275) scale(0.52)">
+    <g class="anim-peek">
+      <use href="#chicken" />
+    </g>
+  </g>
+
+  <!-- Main Target Hunting Scene (Center of reticle is 820, 165) -->
+  <!-- The Target Chicken -->
+  <g transform="translate(820, 165) scale(0.85)">
+    <g class="anim-bob-slow">
+      <use href="#chicken" />
+    </g>
+  </g>
+
+  <!-- The Scope/Reticle (Tracks/follows slightly out of phase for tracking effect) -->
+  <g transform="translate(820, 165)">
+    <g class="anim-scope-track">
+      <use href="#crosshair" />
+    </g>
+  </g>
+
+  <!-- 5. Glassmorphic HUD Dashboard Panel (Left Side, x:90 y:80 to x:540 y:250) -->
+  <g transform="translate(0, 0)">
+    <!-- Glass card backing with drop shadow -->
+    <rect x="90" y="80" width="450" height="170" rx="16" fill="rgba(20, 12, 28, 0.55)" stroke="rgba(255, 255, 255, 0.16)" stroke-width="1.5" filter="url(#glassShadow)" />
+    
+    <!-- HUD corner bracket details -->
+    <!-- Top-left -->
+    <path d="M 102 96 L 102 88 L 110 88" fill="none" stroke="#FF6B35" stroke-width="2" opacity="0.75" />
+    <!-- Top-right -->
+    <path d="M 528 96 L 528 88 L 520 88" fill="none" stroke="#FF6B35" stroke-width="2" opacity="0.75" />
+    <!-- Bottom-left -->
+    <path d="M 102 234 L 102 242 L 110 242" fill="none" stroke="#FF6B35" stroke-width="2" opacity="0.75" />
+    <!-- Bottom-right -->
+    <path d="M 528 234 L 528 242 L 520 242" fill="none" stroke="#FF6B35" stroke-width="2" opacity="0.75" />
+
+    <!-- Tactical Grid Lines Overlay inside card (subtle) -->
+    <line x1="90" y1="165" x2="540" y2="165" stroke="rgba(255, 255, 255, 0.05)" stroke-width="1" />
+    <line x1="315" y1="80" x2="315" y2="250" stroke="rgba(255, 255, 255, 0.05)" stroke-width="1" />
+
+    <!-- HUD Icon (Target Reticle) -->
+    <g transform="translate(132, 128)">
+      <circle cx="0" cy="0" r="14" stroke="#FF6B35" stroke-width="2.5" fill="none" />
+      <circle cx="0" cy="0" r="4.5" fill="#FFFFFF" />
+      <line x1="-19" y1="0" x2="-8" y2="0" stroke="#FF6B35" stroke-width="1.8" />
+      <line x1="8" y1="0" x2="19" y2="0" stroke="#FF6B35" stroke-width="1.8" />
+      <line x1="0" y1="-19" x2="0" y2="-8" stroke="#FF6B35" stroke-width="1.8" />
+      <line x1="0" y1="8" x2="0" y2="19" stroke="#FF6B35" stroke-width="1.8" />
+    </g>
+
+    <!-- Main Wordmark -->
+    <text x="162" y="140" class="wordmark" font-size="34" fill="#FFFFFF">
+      fable-5<tspan fill="#FF6B35">-</tspan><tspan fill="#FF6B35">hunter</tspan>
+    </text>
+
+    <!-- Tagline -->
+    <text x="120" y="178" class="tagline" font-size="14" fill="#E8DFD8" opacity="0.9">
+      Hunting Fable 5, so you do not have to.
+    </text>
+
+    <!-- Scanning / Online Status Badge -->
+    <g transform="translate(120, 205)">
+      <!-- Badge backing -->
+      <rect x="0" y="0" width="138" height="22" rx="11" fill="rgba(76, 175, 80, 0.12)" stroke="rgba(76, 175, 80, 0.4)" stroke-width="1" />
+      <!-- Pulsing light -->
+      <circle cx="14" cy="11" r="4" fill="#4CAF50" class="pulse-dot" />
+      <!-- Badge text -->
+      <text x="26" y="15" class="badge-text" font-size="10" fill="#81C784">RADAR ACTIVE</text>
+    </g>
+
+    <!-- Telemetry Status Badge -->
+    <g transform="translate(270, 205)">
+      <!-- Badge backing -->
+      <rect x="0" y="0" width="124" height="22" rx="11" fill="rgba(255, 152, 0, 0.1)" stroke="rgba(255, 152, 0, 0.35)" stroke-width="1" />
+      <!-- Static amber dot -->
+      <circle cx="14" cy="11" r="3.5" fill="#FF9800" />
+      <!-- Badge text -->
+      <text x="24" y="15" class="badge-text" font-size="10" fill="#FFB74D">TARGET: CL-F5</text>
+    </g>
+  </g>
+</svg>
