@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Tests for fable-5-hunter (standard library only, zero-dependency).
 
@@ -655,7 +654,6 @@ class ConfigTests(unittest.TestCase):
         self.assertEqual(cfg["model_id"], "claude-fable-5")  # default preserved
 
     def test_default_notifiers_are_desktop_and_file(self):
-        cfg = fh.load_config()
         # When no config file is present the defaults apply.
         # We just test the DEFAULT_CONFIG directly since load_config merges from it.
         self.assertIn("desktop", fh.DEFAULT_CONFIG["notifiers"])
@@ -714,7 +712,6 @@ class LockTests(unittest.TestCase):
             self.assertFalse(result)
 
     def test_acquire_takes_over_stale_lock(self):
-        import time as _time
         with tempfile.TemporaryDirectory() as tmp:
             lock = Path(tmp) / "hunter.lock"
             lock.write_text("12345", encoding="utf-8")
