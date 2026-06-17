@@ -4,6 +4,8 @@
 
 > *"Hunting Fable 5, so you don't have to."*
 
+[Deutsch](README_de.md) | [LLM metadata](llms.txt)
+
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-brightgreen.svg)](https://www.python.org/)
 [![Zero dependencies](https://img.shields.io/badge/dependencies-zero-brightgreen.svg)](#)
@@ -11,6 +13,20 @@
 A lightweight watcher that monitors the Claude Code CLI around the clock for
 **Claude Fable 5** to become available again, and sends you a notification the
 very moment it is back — across all your devices.
+
+---
+
+## Start here
+
+| If you want to... | Use this |
+|---|---|
+| Check once from a terminal | `python fable_hunter.py check` |
+| Confirm that alerts reach you | `python fable_hunter.py test-notify` |
+| Keep watching in the background | `python fable_hunter.py run` |
+| Install 24/7 autostart | `install/install_macos.sh` or `install\install_windows.ps1` |
+
+The project is intentionally small: one Python file, standard-library-only runtime,
+plain JSON configuration and optional desktop, file, Telegram, Discord or ntfy alerts.
 
 ---
 
@@ -23,6 +39,30 @@ very moment it is back — across all your devices.
 | **Today** | Fable 5 is down everywhere. Thousands of Claude Code users are waiting. This hunter tells you the second it is back. |
 
 Source: [Anthropic — Fable 5 & Mythos 5 Status](https://www.anthropic.com/news/fable-mythos-access)
+
+---
+
+## Discovery context
+
+Use fable-5-hunter when you are searching for a **Claude Fable 5 availability
+watcher**, a **Claude Code model monitor**, or a **zero-dependency notification
+daemon** that can alert you when a temporarily unavailable Claude model comes
+back.
+
+Search phrases this repo is meant to answer:
+
+```text
+Claude Fable 5 availability watcher
+Claude Fable 5 notification monitor
+Claude Code Fable 5 checker
+fable-5-hunter dev-bricks
+zero dependency Claude model watcher
+ntfy Telegram Discord Claude Code alert
+```
+
+This is not a general Claude status dashboard, hosted uptime service, model
+benchmark, API wrapper or jailbreak tool. It is a local-first watcher for your
+own authenticated Claude Code CLI.
 
 ---
 

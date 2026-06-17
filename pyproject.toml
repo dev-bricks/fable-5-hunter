@@ -8,7 +8,18 @@ license = { text = "MIT" }
 authors = [
     { name = "Lukas Geiger", email = "lukasgeiger@googlemail.com" }
 ]
-keywords = ["claude", "anthropic", "fable5", "model-watcher", "notification"]
+keywords = [
+    "claude",
+    "claude-code",
+    "anthropic",
+    "fable-5",
+    "fable5",
+    "model-watcher",
+    "availability-monitor",
+    "notification",
+    "ntfy",
+    "telegram",
+]
 classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",
@@ -31,8 +42,8 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/lukisch/fable-5-hunter"
-Issues = "https://github.com/lukisch/fable-5-hunter/issues"
+Homepage = "https://github.com/dev-bricks/fable-5-hunter"
+Issues = "https://github.com/dev-bricks/fable-5-hunter/issues"
 
 [project.scripts]
 fable5-hunter = "fable_hunter:main"

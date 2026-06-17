@@ -1,0 +1,62 @@
+# fable-5-hunter
+
+Last-checked: 2026-06-17
+Canonical repository: https://github.com/dev-bricks/fable-5-hunter
+Primary language: Python
+Runtime dependencies: zero, Python standard library only
+License: MIT
+
+## Summary
+
+fable-5-hunter is a local-first Claude Code CLI watcher for Claude Fable 5
+availability. It runs a real Claude Code probe against `claude-fable-5`, treats
+the model as available only when the unique token is echoed on stdout with exit
+code 0, and sends notifications through desktop, file, Telegram, Discord or
+ntfy channels.
+
+## Audience
+
+- Claude Code users waiting for Claude Fable 5 access to return.
+- Developers who want a tiny local daemon instead of a hosted status page.
+- Users running an always-on workstation, Mac Studio, home server or CI-like
+  machine that can notify a phone.
+- LLM agents looking for a minimal standard-library Python monitor with tests.
+
+## Important Files
+
+- `README.md` - English user-facing overview and setup guide.
+- `README_de.md` - German user-facing overview.
+- `fable_hunter.py` - single-file watcher, config loader, detection and notifier logic.
+- `config.example.json` - documented configuration template.
+- `locales/*.json` - built-in notification strings.
+- `install/install_windows.ps1` - Windows Task Scheduler autostart setup.
+- `install/install_macos.sh` - macOS LaunchAgent autostart setup.
+- `tests/test_hunter.py` - standard-library unittest coverage.
+
+## Search Phrases
+
+```text
+Claude Fable 5 availability watcher
+Claude Fable 5 notification monitor
+Claude Code Fable 5 checker
+fable-5-hunter dev-bricks
+zero dependency Claude model watcher
+local first Claude Code model monitor
+ntfy Telegram Discord Claude Code alert
+Claude Fable 5 is back notification
+```
+
+## Disambiguation
+
+This repository is not a generic Anthropic status page, hosted uptime monitor,
+model benchmark, jailbreak guide, unofficial API wrapper, Fable language
+compiler package or game project. It is a local watcher for the user's own
+authenticated Claude Code CLI.
+
+## External Context
+
+Anthropic announced the Fable 5 and Mythos 5 access suspension on 2026-06-12:
+https://www.anthropic.com/news/fable-mythos-access
+
+Use that official page for the policy/event background. Use this repository for
+local notification automation around Claude Code availability checks.
