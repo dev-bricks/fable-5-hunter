@@ -100,6 +100,15 @@ python fable_hunter.py test-notify
 python fable_hunter.py run
 ```
 
+Windows shortcut:
+
+```bat
+START.bat
+```
+
+`START.bat` defaults to `run` and forwards optional CLI arguments, for example
+`START.bat status` or `START.bat test`.
+
 **Zero dependencies** — Python standard library only (Python >= 3.9).
 No `pip install`, no virtual environment needed.
 
@@ -177,6 +186,9 @@ powershell -ExecutionPolicy Bypass -File install\install_windows.ps1
 ```
 Registers the Task Scheduler task `Fable5Hunter` (start at login, restart on crash, hidden).
 Remove: add `-Uninstall` to the command above.
+
+For a foreground/local session without Task Scheduler, double-click `START.bat`
+or run `START.bat run`.
 
 **macOS:**
 ```bash

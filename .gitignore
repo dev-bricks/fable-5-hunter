@@ -59,5 +59,12 @@ _private/
 *.credentials
 .env
 .env.local
+AUFGABEN.txt
+AUFGABEN.md
 TODO.md
 DONE.md
+DECISIONS.md
+LOCK.txt
+LOCK.*.txt
+TESTERGEBNISSE.txt
+tmpclaude-*
