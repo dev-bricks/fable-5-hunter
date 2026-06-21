@@ -322,7 +322,10 @@ def check_fable5(cfg: dict) -> tuple[str, str]:
         return ERROR, "claude CLI not found in PATH (is Claude Code installed?)"
 
     model = cfg.get("model_id", "claude-fable-5")
-    timeout = int(cfg.get("claude_timeout_seconds", 120))
+    try:
+        timeout = _int_cfg(cfg, "claude_timeout_seconds", 120)
+    except ValueError as e:
+        return ERROR, str(e)
     cmd = [claude, "-p", DETECT_PROMPT, "--model", model]
     env = dict(os.environ)
     env["PYTHONIOENCODING"] = "utf-8"
@@ -383,7 +386,9 @@ def _resolve_telegram(cfg: dict) -> tuple[str, str]:
       4. ~/.config/bach/telegram_chat.json (optional BACH fallback — only
          relevant if you run the BACH assistant system; most users won't have this)
     """
-    tg = cfg.get("telegram", {}) or {}
+    tg = cfg.get("telegram", {})
+    if not isinstance(tg, dict):
+        tg = {}
     token = tg.get("bot_token", "")
     chat = tg.get("owner_id", "")
 
@@ -626,7 +631,12 @@ def dispatch(title: str, message: str, cfg: dict) -> dict[str, bool]:
     Unknown notifier names are logged and skipped; exceptions are isolated.
     """
     results: dict[str, bool] = {}
-    for name in cfg.get("notifiers", []):
+    names = cfg.get("notifiers") or []
+    if isinstance(names, str):
+        names = [names]
+    elif not isinstance(names, (list, tuple)):
+        names = []
+    for name in names:
         fn = NOTIFIERS.get(name)
         if not fn:
             log.warning("Unknown notifier: %s", name)
@@ -693,11 +703,32 @@ def release_lock() -> None:
         pass
 
 
+def _int_cfg(cfg: dict, key: str, default: int, minimum: int = 1) -> int:
+    """Read a positive int config value, raising ValueError on bad type or value.
+
+    Guards against config typos like "claude_timeout_seconds": "abc"/null (bad type)
+    AND against non-positive values like -5 or 0 which would otherwise crash the
+    daemon (time.sleep(-n) raises) or busy-loop it (time.sleep(0) hammers the CLI).
+    The raw error would surface far from the config source; callers catch ValueError.
+    """
+    try:
+        value = int(cfg.get(key, default))
+    except (ValueError, TypeError):
+        raise ValueError(f"config: {key} must be an integer")
+    if value < minimum:
+        raise ValueError(f"config: {key} must be >= {minimum}")
+    return value
+
+
 def hunt(cfg: dict) -> int:
     """Entry point for the persistent daemon. Runs until interrupted."""
-    interval = int(cfg.get("check_interval_minutes", 30)) * 60
-    post_found = int(cfg.get("post_found_interval_minutes", 360)) * 60
-    retry = int(cfg.get("alert_retry_seconds", 60))
+    try:
+        interval = _int_cfg(cfg, "check_interval_minutes", 30) * 60
+        post_found = _int_cfg(cfg, "post_found_interval_minutes", 360) * 60
+        retry = _int_cfg(cfg, "alert_retry_seconds", 60)
+    except ValueError as e:
+        log.error("%s", e)
+        return 1
     state = load_state()
 
     stale_after = max(interval, post_found) * 2 + 60
