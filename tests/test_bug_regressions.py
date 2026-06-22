@@ -179,5 +179,61 @@ class DispatchNonIterableNotifiersTests(unittest.TestCase):
         self.assertEqual(fh.dispatch("T", "M", {"notifiers": 5}), {})
 
 
+# ===========================================================================
+# R1 — banner vs. real unavailable response (Ticket T-20260622-01)
+# ===========================================================================
+class BannerFalsePositiveRegressionTests(unittest.TestCase):
+    """
+    The CLI startup banner can show "Fable 5 with high effort - Claude Max"
+    even though the model is blocked. The hunter must NOT treat the banner as
+    availability; only a real echo of ECHO_TOKEN counts. Conversely, the real
+    unavailable message must be detected via partial substrings such as
+    "is currently unavailable" and "fable-mythos-access".
+    """
+
+    def setUp(self):
+        self.cfg = dict(fh.DEFAULT_CONFIG)
+
+    def test_startup_banner_with_rc0_is_not_available(self):
+        proc = FakeProc(
+            stdout="Fable 5 with high effort - Claude Max\n",
+            returncode=0,
+        )
+        with mock.patch.object(fh, "find_claude", return_value="/usr/bin/claude"), \
+             mock.patch.object(fh.subprocess, "run", return_value=proc):
+            status, detail = fh.check_fable5(self.cfg)
+        self.assertEqual(status, fh.UNAVAILABLE)
+        self.assertIn("without token", detail.lower())
+
+    def test_real_unavailable_response_after_prompt_is_unavailable(self):
+        real_response = (
+            "Claude Fable 5 is currently unavailable. "
+            "Learn more: https://www.anthropic.com/news/fable-mythos-access"
+        )
+        proc = FakeProc(stdout=real_response, returncode=0)
+        with mock.patch.object(fh, "find_claude", return_value="/usr/bin/claude"), \
+             mock.patch.object(fh.subprocess, "run", return_value=proc):
+            status, detail = fh.check_fable5(self.cfg)
+        self.assertEqual(status, fh.UNAVAILABLE)
+        self.assertIn("unavailable", detail.lower())
+
+    def test_fable_mythos_access_url_alone_is_unavailable(self):
+        proc = FakeProc(
+            stdout="Learn more: https://www.anthropic.com/news/fable-mythos-access",
+            returncode=0,
+        )
+        with mock.patch.object(fh, "find_claude", return_value="/usr/bin/claude"), \
+             mock.patch.object(fh.subprocess, "run", return_value=proc):
+            status, _ = fh.check_fable5(self.cfg)
+        self.assertEqual(status, fh.UNAVAILABLE)
+
+    def test_only_real_token_echo_counts_as_available(self):
+        proc = FakeProc(stdout=f"{fh.ECHO_TOKEN}\n", returncode=0)
+        with mock.patch.object(fh, "find_claude", return_value="/usr/bin/claude"), \
+             mock.patch.object(fh.subprocess, "run", return_value=proc):
+            status, _ = fh.check_fable5(self.cfg)
+        self.assertEqual(status, fh.AVAILABLE)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -73,10 +73,12 @@ AUTH_ERROR_MARKERS = (
     "could not resolve account",
 )
 
-# Text fragments that unambiguously signal "not available" (empirically verified).
+# Text fragments that signal "not available". Checked as case-insensitive
+# substrings, so partial matches (e.g. "fable-mythos-access") are caught too.
 UNAVAILABLE_MARKERS = (
-    "currently unavailable",
     "is currently unavailable",
+    "unavailable",
+    "fable-mythos-access",
     "issue with the selected model",
     "may not exist or you may not have access",
     "model is overloaded",
@@ -311,11 +313,18 @@ def check_fable5(cfg: dict) -> tuple[str, str]:
 
     Detection rules (must be preserved exactly):
     - Uses `claude -p "<prompt>" --model <model_id>` — NO --fallback-model flag.
-    - AVAILABLE only if ECHO_TOKEN appears in proc.stdout AND returncode == 0.
+    - AVAILABLE only if ALL of the following hold:
+          * returncode == 0
+          * ECHO_TOKEN appears in proc.stdout (real, non-empty model response)
+          * combined stdout+stderr contains NONE of the negative markers.
+      The CLI startup banner or any other non-token output is NOT proof of
+      availability.
     - stdout token in stderr alone does NOT count (prevents false-positives).
-    - UNAVAILABLE_MARKERS checked case-insensitively in combined stdout+stderr.
+    - UNAVAILABLE_MARKERS are checked case-insensitively as substrings in the
+      combined stdout+stderr. This catches "is currently unavailable",
+      "unavailable", "fable-mythos-access", etc.
     - TimeoutExpired → UNAVAILABLE (model hung, treat as unavailable).
-    - rc==0 without token and without marker → conservatively UNAVAILABLE.
+    - Anything without a clear positive token echo → conservatively UNAVAILABLE.
     """
     claude = find_claude()
     if not claude:
@@ -348,7 +357,8 @@ def check_fable5(cfg: dict) -> tuple[str, str]:
         return ERROR, f"Invocation failed: {e}"
 
     stdout = proc.stdout or ""
-    combined = stdout + "\n" + (proc.stderr or "")
+    stderr = proc.stderr or ""
+    combined = stdout + "\n" + stderr
     low = combined.lower()
 
     # Auth/login errors first: claude cannot check → ERROR instead of a wrong
@@ -357,17 +367,20 @@ def check_fable5(cfg: dict) -> tuple[str, str]:
         if marker in low:
             return ERROR, "claude not logged in / auth error: " + combined.strip()[:200]
 
+    # Negative signals win over any other signal. Even if the unique token were
+    # somehow echoed inside an error page/banner, an unavailable marker means
+    # Fable 5 is not really reachable.
+    for marker in UNAVAILABLE_MARKERS:
+        if marker in low:
+            return UNAVAILABLE, combined.strip()[:300]
+
     # Unambiguously available: the model echoed our unique token on stdout.
     # (stdout only — an echo on stderr must not cause a false-positive.)
     if ECHO_TOKEN in stdout and proc.returncode == 0:
         return AVAILABLE, "Token echo received — Fable 5 is responding."
 
-    for marker in UNAVAILABLE_MARKERS:
-        if marker in low:
-            return UNAVAILABLE, combined.strip()[:300]
-
-    # rc==0, no token, no known marker → conservative UNAVAILABLE (unexpected
-    # behaviour should not be treated as availability).
+    # rc==0 with non-token, non-negative output (e.g. the misleading startup
+    # banner) → conservative UNAVAILABLE. Banner text is NOT proof.
     if proc.returncode == 0 and combined.strip():
         return UNAVAILABLE, "Unexpected response without token: " + combined.strip()[:200]
 
@@ -596,15 +609,33 @@ def notify_file(title: str, message: str, cfg: dict | None = None) -> bool:
 
     On Windows, both ~/OneDrive/Desktop and ~/Desktop are checked, because
     the Desktop may be synced to OneDrive.
+
+    The file name conveys the notification kind so that ONLY a genuine
+    availability find produces the alarming ``FABLE5_IS_BACK.txt`` name:
+
+    * ``"found"``  (default) → ``FABLE5_IS_BACK.txt``  — alarming; real find
+    * ``"alive"``            → ``FABLE-5-HUNTER-IS-ALIVE.txt``  — heartbeat
+    * ``"test"``             → ``DELIVERY-TEST.txt``  — delivery / self-test
+
+    Callers pass the kind via the internal config key ``"_notify_kind"``
+    (underscore-prefix = private, never set by users in config.json).
     """
+    kind = (cfg or {}).get("_notify_kind", "found")
+    _KIND_TO_FILENAME = {
+        "found": "FABLE5_IS_BACK.txt",
+        "alive": "FABLE-5-HUNTER-IS-ALIVE.txt",
+        "test":  "DELIVERY-TEST.txt",
+    }
+    filename = _KIND_TO_FILENAME.get(kind, "FABLE5_IS_BACK.txt")
+
     stamp = _dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     body = f"{title}\n{message}\n\n(Fable-5-Hunter {VERSION}, {stamp})\n"
     targets = []
     for cand in ("~/OneDrive/Desktop", "~/Desktop"):
         d = Path(os.path.expanduser(cand))
         if d.is_dir():
-            targets.append(d / "FABLE5_IS_BACK.txt")
-    targets.append(HERE / "FABLE5_IS_BACK.txt")
+            targets.append(d / filename)
+    targets.append(HERE / filename)
     ok = False
     for target in targets:
         try:
@@ -767,7 +798,7 @@ def _hunt_loop(cfg: dict, state: dict, interval: int, post_found: int, retry: in
                 # Guaranteed delivery: fire all channels, mark as found only
                 # when at least one succeeds; otherwise set pending_alert and
                 # retry quickly (no spam once delivered).
-                results = dispatch(APP_NAME, _msg(cfg, "available"), cfg)
+                results = dispatch(APP_NAME, _msg(cfg, "available"), {**cfg, "_notify_kind": "found"})
                 if any(results.values()):
                     state["found"] = True
                     state["pending_alert"] = False
@@ -794,7 +825,7 @@ def _hunt_loop(cfg: dict, state: dict, interval: int, post_found: int, retry: in
             # Warn once so the user knows the hunter can't check.
             log.error("Cannot check: %s", detail)
             if not state.get("found") and not state.get("error_notified"):
-                dispatch(APP_NAME, _msg(cfg, "cannot_check", detail=detail), cfg)
+                dispatch(APP_NAME, _msg(cfg, "cannot_check", detail=detail), {**cfg, "_notify_kind": "alive"})
                 state["error_notified"] = True
             sleep_for = interval
 
@@ -803,11 +834,11 @@ def _hunt_loop(cfg: dict, state: dict, interval: int, post_found: int, retry: in
             if state.get("found"):
                 # Was available, now gone again → resume hunting.
                 # Use elif so gone_again and alive never fire in the same iteration.
-                dispatch(APP_NAME, _msg(cfg, "gone_again"), cfg)
+                dispatch(APP_NAME, _msg(cfg, "gone_again"), {**cfg, "_notify_kind": "alive"})
                 state["found"] = False
             elif state.get("last_alive_date") != _today():
                 # Daily heartbeat (also fires immediately on first run).
-                dispatch(APP_NAME, _msg(cfg, "alive"), cfg)
+                dispatch(APP_NAME, _msg(cfg, "alive"), {**cfg, "_notify_kind": "alive"})
                 state["last_alive_date"] = _today()
             sleep_for = interval
 
@@ -826,7 +857,7 @@ def cmd_check(cfg: dict) -> int:
 
 
 def cmd_test_notify(cfg: dict) -> int:
-    res = dispatch(APP_NAME, _msg(cfg, "test_notify"), cfg)
+    res = dispatch(APP_NAME, _msg(cfg, "test_notify"), {**cfg, "_notify_kind": "test"})
     ok = any(res.values())
     if ok:
         print("OK — at least one notifier succeeded:", [k for k, v in res.items() if v])
@@ -865,7 +896,7 @@ def cmd_test(cfg: dict) -> int:
 
     notifiers = cfg.get("notifiers", [])
     print(f"[2/2] Sending a TEST notification to all configured channels: {notifiers}")
-    results = dispatch(test_title, test_message, cfg)
+    results = dispatch(test_title, test_message, {**cfg, "_notify_kind": "test"})
 
     print("\nChannel results:")
     if not results:

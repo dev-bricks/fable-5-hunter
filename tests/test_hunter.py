@@ -198,6 +198,62 @@ class CheckFable5Tests(unittest.TestCase):
             status, _ = fh.check_fable5(self.cfg)
         self.assertEqual(status, fh.UNAVAILABLE)
 
+    def test_banner_text_rc0_is_unavailable(self):
+        # The CLI startup banner misleadingly shows "Fable 5 with high effort"
+        # even though the model is not reachable. It must NOT count as available.
+        proc = FakeProc(
+            stdout="Fable 5 with high effort - Claude Max\n",
+            returncode=0,
+        )
+        with mock.patch.object(fh, "find_claude", return_value="/usr/bin/claude"), \
+             mock.patch.object(fh.subprocess, "run", return_value=proc):
+            status, detail = fh.check_fable5(self.cfg)
+        self.assertEqual(status, fh.UNAVAILABLE)
+        self.assertIn("without token", detail.lower())
+
+    def test_real_unavailable_message_is_unavailable(self):
+        # Empirically observed response after sending the prompt.
+        proc = FakeProc(
+            stdout=(
+                "Claude Fable 5 is currently unavailable. "
+                "Learn more: https://www.anthropic.com/news/fable-mythos-access"
+            ),
+            returncode=0,
+        )
+        with mock.patch.object(fh, "find_claude", return_value="/usr/bin/claude"), \
+             mock.patch.object(fh.subprocess, "run", return_value=proc):
+            status, _ = fh.check_fable5(self.cfg)
+        self.assertEqual(status, fh.UNAVAILABLE)
+
+    def test_unavailable_url_marker_is_unavailable(self):
+        # The URL path alone is a reliable negative signal.
+        proc = FakeProc(
+            stdout="Learn more: https://www.anthropic.com/news/fable-mythos-access",
+            returncode=0,
+        )
+        with mock.patch.object(fh, "find_claude", return_value="/usr/bin/claude"), \
+             mock.patch.object(fh.subprocess, "run", return_value=proc):
+            status, _ = fh.check_fable5(self.cfg)
+        self.assertEqual(status, fh.UNAVAILABLE)
+
+    def test_negative_marker_is_case_insensitive(self):
+        proc = FakeProc(stdout="Fable 5 is CURRENTLY UNAVAILABLE. Sorry.", returncode=0)
+        with mock.patch.object(fh, "find_claude", return_value="/usr/bin/claude"), \
+             mock.patch.object(fh.subprocess, "run", return_value=proc):
+            status, _ = fh.check_fable5(self.cfg)
+        self.assertEqual(status, fh.UNAVAILABLE)
+
+    def test_token_plus_negative_marker_is_unavailable(self):
+        # Safety: a negative signal must override a token-like echo.
+        proc = FakeProc(
+            stdout=f"{fh.ECHO_TOKEN}\nClaude Fable 5 is currently unavailable.",
+            returncode=0,
+        )
+        with mock.patch.object(fh, "find_claude", return_value="/usr/bin/claude"), \
+             mock.patch.object(fh.subprocess, "run", return_value=proc):
+            status, _ = fh.check_fable5(self.cfg)
+        self.assertEqual(status, fh.UNAVAILABLE)
+
 
 # ===========================================================================
 # Telegram notifier
@@ -388,6 +444,42 @@ class FileNotifierTests(unittest.TestCase):
             content = (Path(tmp) / "FABLE5_IS_BACK.txt").read_text(encoding="utf-8")
         self.assertIn("MY TITLE", content)
         self.assertIn("MY MESSAGE", content)
+
+    # --- kind="alive" ---------------------------------------------------------
+
+    def test_alive_kind_writes_alive_file(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            with mock.patch.object(fh, "HERE", Path(tmp)), \
+                 mock.patch.object(fh.os.path, "expanduser", side_effect=lambda p: p):
+                fh.notify_file("Hunter alive", "Still hunting", cfg={"_notify_kind": "alive"})
+            self.assertTrue((Path(tmp) / "FABLE-5-HUNTER-IS-ALIVE.txt").is_file())
+            self.assertFalse((Path(tmp) / "FABLE5_IS_BACK.txt").is_file())
+
+    # --- kind="test" ----------------------------------------------------------
+
+    def test_test_kind_writes_delivery_test_file(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            with mock.patch.object(fh, "HERE", Path(tmp)), \
+                 mock.patch.object(fh.os.path, "expanduser", side_effect=lambda p: p):
+                fh.notify_file("Test", "Delivery test", cfg={"_notify_kind": "test"})
+            self.assertTrue((Path(tmp) / "DELIVERY-TEST.txt").is_file())
+            self.assertFalse((Path(tmp) / "FABLE5_IS_BACK.txt").is_file())
+
+    # --- negative: test and alive must never write the alarming name ----------
+
+    def test_alive_does_not_write_is_back(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            with mock.patch.object(fh, "HERE", Path(tmp)), \
+                 mock.patch.object(fh.os.path, "expanduser", side_effect=lambda p: p):
+                fh.notify_file("alive", "hunting", cfg={"_notify_kind": "alive"})
+            self.assertFalse((Path(tmp) / "FABLE5_IS_BACK.txt").exists())
+
+    def test_test_does_not_write_is_back(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            with mock.patch.object(fh, "HERE", Path(tmp)), \
+                 mock.patch.object(fh.os.path, "expanduser", side_effect=lambda p: p):
+                fh.notify_file("test", "delivery test", cfg={"_notify_kind": "test"})
+            self.assertFalse((Path(tmp) / "FABLE5_IS_BACK.txt").exists())
 
 
 # ===========================================================================
