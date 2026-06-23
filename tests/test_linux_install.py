@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Regression tests for the Linux autostart installer contract."""
 import shutil
+import shlex
 import subprocess
 import unittest
 from pathlib import Path
@@ -22,6 +23,14 @@ def find_usable_bash() -> Optional[str]:
         if candidate.is_file():
             return str(candidate)
     return None
+
+
+def bash_readable_path(bash: str, path: Path) -> str:
+    """Convert a Windows path into a path syntax the selected Bash understands."""
+    posix_tail = path.as_posix().replace(":", "", 1)
+    if "system32\\bash.exe" in bash.lower():
+        return f"/mnt/{path.drive[0].lower()}{posix_tail[1:]}"
+    return f"/{path.drive[0].lower()}{posix_tail[2:]}"
 
 
 class LinuxInstallerTests(unittest.TestCase):
@@ -56,7 +65,8 @@ class LinuxInstallerTests(unittest.TestCase):
         bash = find_usable_bash()
         if not bash:
             self.skipTest("usable bash is not available on this host")
-        subprocess.run([bash, "-n", str(SCRIPT)], check=True)
+        script_path = bash_readable_path(bash, SCRIPT)
+        subprocess.run([bash, "-lc", f"bash -n {shlex.quote(script_path)}"], check=True)
 
 
 if __name__ == "__main__":
