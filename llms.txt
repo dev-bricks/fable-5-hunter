@@ -31,7 +31,9 @@ ntfy channels.
 - `locales/*.json` - built-in notification strings.
 - `install/install_windows.ps1` - Windows Task Scheduler autostart setup.
 - `install/install_macos.sh` - macOS LaunchAgent autostart setup.
+- `install/install_linux.sh` - Linux user autostart setup via systemd user service or cron fallback.
 - `tests/test_hunter.py` - standard-library unittest coverage.
+- `tests/test_linux_install.py` - Linux installer contract and syntax checks.
 
 ## Search Phrases
 

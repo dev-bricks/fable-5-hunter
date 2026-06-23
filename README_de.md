@@ -21,7 +21,7 @@ Desktop, Datei, Telegram, Discord oder ntfy.
 | Einmal prüfen | `python fable_hunter.py check` |
 | Benachrichtigungen testen | `python fable_hunter.py test-notify` |
 | Dauerhaft im Vordergrund laufen lassen | `python fable_hunter.py run` |
-| Autostart einrichten | `install/install_macos.sh` oder `install\install_windows.ps1` |
+| Autostart einrichten | `install/install_linux.sh`, `install/install_macos.sh` oder `install\install_windows.ps1` |
 
 Keine Laufzeit-Abhängigkeiten: Python 3.9+ reicht. Es gibt kein Pflicht-`pip install`
 und keine notwendige virtuelle Umgebung.
@@ -105,6 +105,29 @@ macOS:
 ```bash
 bash install/install_macos.sh
 ```
+
+Linux:
+
+```bash
+bash install/install_linux.sh
+```
+
+Das Skript richtet bevorzugt einen user-scoped systemd-Dienst ein. Auf kleinen
+Hosts ohne laufende systemd-User-Session kannst du den Cron-Fallback erzwingen:
+
+```bash
+bash install/install_linux.sh --cron
+```
+
+Status und Entfernung:
+
+```bash
+bash install/install_linux.sh --status
+bash install/install_linux.sh --uninstall
+```
+
+Der Linux-Autostart braucht kein `sudo`; Logs liegen unter
+`~/.local/state/fable5hunter/`.
 
 ## Lizenz
 

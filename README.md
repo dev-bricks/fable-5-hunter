@@ -23,7 +23,7 @@ very moment it is back — across all your devices.
 | Check once from a terminal | `python fable_hunter.py check` |
 | Confirm that alerts reach you | `python fable_hunter.py test-notify` |
 | Keep watching in the background | `python fable_hunter.py run` |
-| Install 24/7 autostart | `install/install_macos.sh` or `install\install_windows.ps1` |
+| Install 24/7 autostart | `install/install_linux.sh`, `install/install_macos.sh` or `install\install_windows.ps1` |
 
 The project is intentionally small: one Python file, standard-library-only runtime,
 plain JSON configuration and optional desktop, file, Telegram, Discord or ntfy alerts.
@@ -196,6 +196,27 @@ bash install/install_macos.sh
 ```
 Creates the LaunchAgent `com.fable5hunter.agent` (RunAtLoad + KeepAlive).
 Remove: `bash install/install_macos.sh --uninstall`.
+
+**Linux:**
+```bash
+bash install/install_linux.sh
+```
+Installs a user-scoped systemd service when `systemctl --user` is available.
+On smaller hosts without a running user systemd session, use the cron fallback:
+
+```bash
+bash install/install_linux.sh --cron
+```
+
+Useful maintenance commands:
+
+```bash
+bash install/install_linux.sh --status
+bash install/install_linux.sh --uninstall
+```
+
+The Linux installer writes logs under `~/.local/state/fable5hunter/` and does
+not require `sudo`.
 
 ---
 
