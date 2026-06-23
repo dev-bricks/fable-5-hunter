@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 """Regression tests for the Linux autostart installer contract."""
-import shutil
 import shlex
+import shutil
 import subprocess
 import unittest
 from pathlib import Path
 from typing import Optional
-
 
 ROOT = Path(__file__).resolve().parent.parent
 SCRIPT = ROOT / "install" / "install_linux.sh"

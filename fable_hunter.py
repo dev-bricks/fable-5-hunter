@@ -744,8 +744,8 @@ def _int_cfg(cfg: dict, key: str, default: int, minimum: int = 1) -> int:
     """
     try:
         value = int(cfg.get(key, default))
-    except (ValueError, TypeError):
-        raise ValueError(f"config: {key} must be an integer")
+    except (ValueError, TypeError) as err:
+        raise ValueError(f"config: {key} must be an integer") from err
     if value < minimum:
         raise ValueError(f"config: {key} must be >= {minimum}")
     return value
