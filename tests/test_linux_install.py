@@ -29,10 +29,10 @@ def bash_readable_path(bash: str, path: Path) -> str:
     """Convert a Windows path into a path syntax the selected Bash understands."""
     if not path.drive:
         return path.as_posix()
-    posix_tail = path.as_posix().replace(":", "", 1)
+    rest = path.as_posix()[3:]
     if "system32\\bash.exe" in bash.lower():
-        return f"/mnt/{path.drive[0].lower()}{posix_tail[1:]}"
-    return f"/{path.drive[0].lower()}{posix_tail[2:]}"
+        return f"/mnt/{path.drive[0].lower()}/{rest}"
+    return f"/{path.drive[0].lower()}/{rest}"
 
 
 class LinuxInstallerTests(unittest.TestCase):
